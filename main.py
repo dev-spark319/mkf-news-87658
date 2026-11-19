@@ -230,7 +230,7 @@ VOL = "No. 87658"
 
 # (kicker, headline, body, col_span, box_bg)
 STORIES = [
-    ("GAMING", "GTA VI ARRIVES: MILLIONS QUEUE FOR LAUNCH-DAY CONSOLES",
+    ("GAMING", "GTA VI ARRIVES: MILLIONS QUEUE FOR DAY-ONE CONSOLES",
      "Rockstar's Grand Theft Auto VI lands today as retailers sell out of "
      "next-gen bundles; fans queue overnight for the November 19 release.",
      2, None),
@@ -241,19 +241,19 @@ STORIES = [
     ("CLIMATE", "COP31 TALKS ENTER FINAL DAY WITH FOSSIL-FUEL DEAL UNRESOLVED",
      "Delegates at the climate summit haggle over a transition roadmap and "
      "adaptation finance as ministers race to land a closing text.",
-     1, None),
-    ("TECH & AI", "AI CHIPS, AGENTS AND REGULATION DOMINATE TECH AGENDA",
-     "Data-centre spending hinew records as regulators sharpen AI rules; "
-     "agenmove from demo to deployment across the enterprise.",
-     2, None),
-    ("SPORT", "WORLD CUP COUNTDOWN: PLAYOFFS SET FINAL SLOTS FOR 2026",
-     "Hosfinalise preparations as the last qualifying spoare decided; "
-     "squad announcemenand injury races dominate the buildup.",
-     2, None),
-    ("WORLD", "LEADERS HEAD TO G20 AS SUMMIT SETS TIGHT SECURITY DRAMA",
+     1, PAPER2),
+    ("WORLD", "WORLD LEADERS GATHER FOR G20 SUMMIT UNDER TIGHT SECURITY",
      "Diplomafine-tune communique language while protesand port "
      "closures test hosts; trade and AI safety top the agenda.",
      1, None),
+    ("TECH & AI", "AI CHIPS, AGENTS AND RULES DOMINATE THE TECH AGENDA",
+     "Data-centre spending hit new records as regulators sharpen AI rules; "
+     "agent moves from demo to deployment across the enterprise.",
+     1, None),
+    ("SPORT", "WORLD CUP COUNTDOWN: PLAYOFFS SET FINAL SLOTS FOR 2026",
+     "Hosfinalise preparations as the last qualifying spoare decided; "
+     "squad announcemenand injury races dominate the buildup.",
+     1, PAPER2),
 ]
 
 
@@ -310,46 +310,35 @@ def page():
     draw_text(cv, "VI", mx + 14, y0 + 40, WHITE, 8)
     draw_text(cv, "2026", mx + 12, y0 + 104, ACCENT, 1)
 
-    # story grid
-    gy = y0 + box_h + 18
+    # story grid: 2 columns x 2 rows of single-column story boxes
+    gy = y0 + box_h + 16
     story = STORIES[1:]
-    # row 1: two single cols
-    bx = M
-    for idx, (k2, h2, b2, span2, bg2) in enumerate(story[:2]):
-        bh = 196
-        if bg2:
-            cv.rect(bx, gy, colw, bh, bg2)
-        cv.frame(bx, gy, colw, bh, RULE, 1)
-        draw_text(cv, k2, bx + 10, gy + 10, ACCENT, 2)
-        cv.hline(bx + 10, gy + 32, colw - 20, RULE, 1)
-        lines = wrap(h2, colw - 20, 2)[:4]
-        yy = gy + 42
-        for ln in lines:
-            draw_text(cv, ln, bx + 10, yy, INK, 2)
-            yy += 14
-        cv.hline(bx + 10, gy + 102, colw - 20, RULE, 1)
-        lead_body(cv, b2, bx + 10, gy + 112, colw - 20, 5, sc=1, lh=10)
-        bx += colw + gutter
+    bh = 160
+    for row in range(2):
+        gy_row = gy + row * (bh + 16)
+        bx = M
+        for k2, h2, b2, span2, bg2 in story[row * 2:row * 2 + 2]:
+            if bg2:
+                cv.rect(bx, gy_row, colw, bh, bg2)
+            cv.frame(bx, gy_row, colw, bh, RULE, 1)
+            draw_text(cv, k2, bx + 10, gy_row + 10, ACCENT, 2)
+            cv.hline(bx + 10, gy_row + 30, colw - 20, ACCENT, 1)
+            lines = wrap(h2, colw - 20, 2)[:3]
+            yy = gy_row + 38
+            for ln in lines:
+                draw_text(cv, ln, bx + 10, yy, INK, 2)
+                yy += 14
+            cv.hline(bx + 10, gy_row + 84, colw - 20, RULE, 1)
+            lead_body(cv, b2, bx + 10, gy_row + 92, colw - 20, 5, sc=1, lh=9)
+            bx += colw + gutter
 
-    # row 2: one single + one double
-    gy2 = gy + 196 + 18
-    bx = M
-    for idx, (k2, h2, b2, span2, bg2) in enumerate(story[2:4]):
-        cw = colw * span2 + gutter * (span2 - 1)
-        bh = 196
-        if bg2:
-            cv.rect(bx, gy2, cw, bh, bg2)
-        cv.frame(bx, gy2, cw, bh, RULE, 1)
-        draw_text(cv, k2, bx + 10, gy2 + 10, ACCENT2, 2)
-        cv.hline(bx + 10, gy2 + 32, cw - 20, RULE, 1)
-        lines = wrap(h2, cw - 20, 2)[:4]
-        yy = gy2 + 42
-        for ln in lines:
-            draw_text(cv, ln, bx + 10, yy, INK, 2)
-            yy += 14
-        cv.hline(bx + 10, gy2 + 102, cw - 20, RULE, 1)
-        lead_body(cv, b2, bx + 10, gy2 + 112, cw - 20, 5, sc=1, lh=10)
-        bx += cw + gutter
+    # bottom index strip (fills the space below the story grid)
+    iy = gy + 2 * (bh + 16) + 4
+    cv.hline(M, iy, W - 2 * M, RULE, 2)
+    idx = "INSIDE: MARKETS  *  CLIMATE  *  WORLD  *  TECH & AI  *  SPORT  *  VIEWPOINT"
+    draw_text(cv, idx, M, iy + 12, ACCENT, 1)
+    quote = "\"THE WORLD IN SIX STORIES\"  --  THE DEV-SPARK319 DESK"
+    draw_text(cv, quote, M, iy + 30, GREY, 1)
 
     # footer
     fy = H - 40
